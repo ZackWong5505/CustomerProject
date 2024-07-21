@@ -5,6 +5,7 @@ import com.customer.request.AddCustomerRequest;
 import com.customer.request.DeleteCustomerRequest;
 import com.customer.request.UpdateCustomerRequest;
 import com.customer.service.CustomerService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,6 +37,11 @@ public class CustomerController {
     public void doDeleteCustomer(@RequestBody DeleteCustomerRequest deleteCustomerRequest){
 
         customerService.deleteCustomer(deleteCustomerRequest);
+    }
+
+    @GetMapping("/external")
+    public String getExternalData() throws JsonProcessingException {
+        return customerService.getExternalData();
     }
 
 }
