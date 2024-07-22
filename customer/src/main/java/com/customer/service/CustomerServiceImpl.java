@@ -1,6 +1,7 @@
 package com.customer.service;
 
 import com.customer.entity.Customer;
+import com.customer.event.ExternalApiDataEvent;
 import com.customer.modal.CustomerDTO;
 import com.customer.repository.CustomerRepository;
 import com.customer.request.AddCustomerRequest;
@@ -9,6 +10,7 @@ import com.customer.request.UpdateCustomerRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -30,7 +32,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Override
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+
    public CustomerDTO getCustomerDetail(String name){
 
        Customer cust = customerRepository.findByName(name);
@@ -96,6 +100,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Scheduled(fixedRate = 10000) // 10 seconds
     public void scheduledTask() throws JsonProcessingException {
         String data = getExternalData();
+        eventPublisher.publishEvent(new ExternalApiDataEvent(data));
         System.out.println("Fetched Data: " + data);
     }
 
